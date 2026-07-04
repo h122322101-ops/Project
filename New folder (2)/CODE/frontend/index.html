@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cipher | Dynamic Decoder</title>
     
-    <!-- Fonts: Playfair Display for headers, Inter for UI, JetBrains Mono for terminal text -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script>
@@ -31,11 +29,11 @@
                             glow: 'rgba(201, 150, 42, 0.4)'
                         },
                         dark: {
-                            bg: '#0A0A0A',
-                            surface: '#141414',
-                            border: '#2A2A2A',
+                            bg: '#000000',
+                            surface: '#0A0A0A',
+                            border: '#1F1F1F',
                             text: '#E0E0E0',
-                            muted: '#888888'
+                            muted: '#777777'
                         },
                         light: {
                             bg: '#F5F5F0',
@@ -47,17 +45,29 @@
                     },
                     animation: {
                         'spin-slow': 'spin 3s linear infinite',
-                        'pulse-glow': 'pulseGlow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'pulse-glow': 'pulseGlow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
                         'scanline': 'scanline 8s linear infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'orb-float': 'orbFloat 15s infinite alternate ease-in-out',
                     },
                     keyframes: {
                         pulseGlow: {
-                            '0%, 100%': { boxShadow: '0 0 10px rgba(201, 150, 42, 0.2)' },
-                            '50%': { boxShadow: '0 0 20px rgba(201, 150, 42, 0.6)' },
+                            '0%, 100%': { opacity: '0.4', filter: 'blur(2px)' },
+                            '50%': { opacity: '0.8', filter: 'blur(4px)' },
                         },
                         scanline: {
                             '0%': { transform: 'translateY(-100%)' },
                             '100%': { transform: 'translateY(100vh)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-12px)' },
+                        },
+                        orbFloat: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' }
                         }
                     }
                 }
@@ -68,13 +78,13 @@
     <style>
         /* Base Variables for Theme Switching */
         :root {
-            --bg-color: #0A0A0A;
-            --surface-color: rgba(20, 20, 20, 0.65);
-            --border-color: #2A2A2A;
+            --bg-color: #000000; /* Moody black */
+            --surface-color: rgba(10, 10, 10, 0.55);
+            --border-color: #1F1F1F;
             --text-main: #E0E0E0;
-            --text-muted: #888888;
-            --shadow-color: rgba(0, 0, 0, 0.5);
-            --grid-color: rgba(255, 255, 255, 0.03);
+            --text-muted: #777777;
+            --shadow-color: rgba(0, 0, 0, 0.8);
+            --grid-color: rgba(255, 255, 255, 0.02);
         }
 
         .light-mode {
@@ -94,42 +104,62 @@
             overflow-x: hidden;
         }
 
-        /* Ambient Background Pattern */
+        /* Ambient Background Grid */
         .ambient-bg {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             pointer-events: none;
-            z-index: -1;
+            z-index: -10;
             background-image: 
                 linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
                 linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
-            background-size: 40px 40px;
-            mask-image: radial-gradient(circle at center, black, transparent 80%);
-            -webkit-mask-image: radial-gradient(circle at center, black, transparent 80%);
+            background-size: 50px 50px;
+            mask-image: radial-gradient(ellipse at center, black, transparent 70%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black, transparent 70%);
+        }
+
+        /* Ethereal Orbs */
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -11;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+        .orb-1 {
+            top: -10%; left: -10%; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, #C9962A, transparent 70%);
+            animation: orbFloat 20s infinite alternate ease-in-out;
+        }
+        .orb-2 {
+            bottom: -20%; right: -10%; width: 60vw; height: 60vw;
+            background: radial-gradient(circle, #A67A20, transparent 70%);
+            animation: orbFloat 25s infinite alternate-reverse ease-in-out;
         }
 
         .scanline {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 10vh;
-            background: linear-gradient(to bottom, transparent, rgba(201,150,42,0.05), transparent);
+            top: 0; left: 0; width: 100vw; height: 12vh;
+            background: linear-gradient(to bottom, transparent, rgba(201,150,42,0.08), transparent);
             pointer-events: none;
-            z-index: -1;
-            animation: scanline 8s linear infinite;
+            z-index: 50;
+            animation: scanline 7s linear infinite;
         }
 
         /* Glassmorphism Panels */
         .glass-panel {
             background: var(--surface-color);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             border: 1px solid var(--border-color);
-            box-shadow: 0 8px 32px var(--shadow-color);
+            box-shadow: 0 15px 35px var(--shadow-color), inset 0 0 15px rgba(255,255,255,0.01);
             border-radius: 16px;
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
         }
 
         .glass-input {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.4);
             border: 1px solid var(--border-color);
             color: var(--text-main);
             transition: all 0.3s ease;
@@ -141,7 +171,8 @@
         .glass-input:focus {
             outline: none;
             border-color: #C9962A;
-            box-shadow: 0 0 15px rgba(201, 150, 42, 0.15);
+            box-shadow: 0 0 20px rgba(201, 150, 42, 0.2);
+            background: rgba(0, 0, 0, 0.6);
         }
 
         /* Animated Gradient Border Wrapper for Active Input */
@@ -153,9 +184,10 @@
             transition: background 0.3s ease;
         }
         .animated-border-wrapper.focused {
-            background: linear-gradient(90deg, #C9962A, #F5E100, #C9962A);
+            background: linear-gradient(90deg, #C9962A, rgba(245, 225, 0, 0.6), #C9962A);
             background-size: 200% 200%;
             animation: gradientMove 3s ease infinite;
+            box-shadow: 0 0 15px rgba(201, 150, 42, 0.15);
         }
         @keyframes gradientMove {
             0% { background-position: 0% 50%; }
@@ -164,7 +196,7 @@
         }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #C9962A; }
@@ -173,6 +205,7 @@
         .scramble-char {
             display: inline-block;
             min-width: 0.6em;
+            text-shadow: 0 0 8px rgba(201, 150, 42, 0.4);
         }
 
         /* UI Toasts */
@@ -181,13 +214,14 @@
             bottom: 2rem;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: var(--surface-color);
+            background: rgba(10, 10, 10, 0.85);
             border: 1px solid #C9962A;
             color: var(--text-main);
             padding: 0.75rem 1.5rem;
             border-radius: 50px;
             backdrop-filter: blur(10px);
             opacity: 0;
+            box-shadow: 0 0 20px rgba(201, 150, 42, 0.2);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 1000;
         }
@@ -199,30 +233,31 @@
 </head>
 <body class="antialiased min-h-screen flex flex-col relative selection:bg-gold selection:text-black">
     
+    <canvas id="matrix-rain" class="fixed top-0 left-0 w-full h-full -z-20 opacity-60"></canvas>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
     <div class="ambient-bg"></div>
     <div class="scanline"></div>
 
-    <!-- Top Navigation / Controls -->
     <nav class="w-full max-w-4xl mx-auto p-6 flex justify-between items-center z-10 relative">
         <div class="flex items-center gap-3">
-            <svg class="w-6 h-6 text-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-            <span class="font-mono text-xs tracking-widest text-gold opacity-80 uppercase hidden sm:inline">Secure Comm Channel</span>
+            <svg class="w-6 h-6 text-gold animate-pulse-glow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            <span class="font-mono text-xs tracking-widest text-gold opacity-80 uppercase hidden sm:inline" style="text-shadow: 0 0 10px rgba(201,150,42,0.3);">Secure Comm Channel</span>
         </div>
         <div class="flex items-center gap-4">
-            <button id="btn-sound" class="text-gray-400 hover:text-gold transition-colors" title="Toggle Sound" aria-label="Toggle Sound">
+            <button id="btn-sound" class="text-gray-500 hover:text-gold transition-colors" title="Toggle Sound" aria-label="Toggle Sound">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
             </button>
-            <button id="btn-theme" class="text-gray-400 hover:text-gold transition-colors" title="Toggle Theme" aria-label="Toggle Theme">
+            <button id="btn-theme" class="text-gray-500 hover:text-gold transition-colors" title="Toggle Theme" aria-label="Toggle Theme">
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
             </button>
         </div>
     </nav>
 
-    <!-- Main Container -->
-    <main class="w-full max-w-3xl mx-auto px-4 flex-grow flex flex-col items-center justify-center py-8 z-10">
+    <main class="w-full max-w-3xl mx-auto px-4 flex-grow flex flex-col items-center justify-center py-8 z-10 animate-float">
         
         <header class="text-center mb-10 transform transition-all duration-700 hover:scale-105">
-            <h1 class="text-5xl md:text-7xl font-serif font-bold tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-gold-light to-gold-dark" style="filter: drop-shadow(0px 4px 12px rgba(201, 150, 42, 0.2));">
+            <h1 class="text-5xl md:text-7xl font-serif font-bold tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-gold-light via-gold to-gold-dark" style="filter: drop-shadow(0px 0px 20px rgba(201, 150, 42, 0.4));">
                 Cipher
             </h1>
             <p class="font-sans text-sm md:text-base text-[var(--text-muted)] max-w-md mx-auto leading-relaxed">
@@ -230,9 +265,8 @@
             </p>
         </header>
 
-        <section class="w-full glass-panel p-6 md:p-8 mb-8 animate-fade-in-up">
+        <section class="w-full glass-panel p-6 md:p-8 mb-8">
             
-            <!-- Controls Row -->
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4 mb-6">
                 
                 <div class="flex gap-2 bg-[var(--bg-color)] p-1 rounded-lg border border-[var(--border-color)]">
@@ -274,10 +308,9 @@
                 </div>
             </div>
 
-            <!-- Text Input Area -->
             <div class="mb-4">
                 <div class="flex justify-between items-center mb-2">
-                    <span class="font-mono text-xs text-gold">> AWAITING_TRANSMISSION</span>
+                    <span class="font-mono text-xs text-gold animate-pulse">> AWAITING_TRANSMISSION</span>
                     <button id="btn-clear-input" class="text-xs text-[var(--text-muted)] hover:text-red-400 transition-colors font-mono">CLEAR [ESC]</button>
                 </div>
                 <div class="animated-border-wrapper" id="input-wrapper">
@@ -286,7 +319,7 @@
             </div>
 
             <div class="flex gap-3">
-                <button id="btn-process" class="flex-1 bg-gold hover:bg-gold-light text-black font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex justify-center items-center gap-2 transform active:scale-95 shadow-[0_0_15px_rgba(201,150,42,0.3)] hover:shadow-[0_0_25px_rgba(201,150,42,0.6)]">
+                <button id="btn-process" class="flex-1 bg-gold hover:bg-gold-light text-black font-semibold py-3 px-6 rounded-lg transition-all duration-200 flex justify-center items-center gap-2 transform active:scale-95 shadow-[0_0_20px_rgba(201,150,42,0.4)] hover:shadow-[0_0_30px_rgba(201,150,42,0.7)] hover:-translate-y-1">
                     <svg class="w-5 h-5" id="process-icon-unlock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 9.9-1"></path></svg>
                     <svg class="w-5 h-5 hidden animate-spin" id="process-icon-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>
                     <span id="btn-process-text">Decode Message</span>
@@ -305,7 +338,7 @@
                     <button id="btn-share" class="text-[var(--text-muted)] hover:text-gold transition-colors p-2 rounded hover:bg-[var(--bg-color)]" title="Share Link">
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
                     </button>
-                    <button id="btn-copy" class="flex items-center gap-2 text-xs font-mono bg-[var(--bg-color)] border border-[var(--border-color)] hover:border-gold px-3 py-1.5 rounded transition-all">
+                    <button id="btn-copy" class="flex items-center gap-2 text-xs font-mono bg-[var(--bg-color)] border border-[var(--border-color)] hover:border-gold hover:text-gold px-3 py-1.5 rounded transition-all">
                         <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                         COPY
                     </button>
@@ -325,14 +358,13 @@
                 </button>
             </div>
             <div class="max-h-96 overflow-y-auto pr-2 flex flex-col gap-2" id="brute-list">
-                <!-- Brute force items injected here -->
-            </div>
+                </div>
         </section>
 
         <section class="w-full mt-8">
             <div class="flex justify-between items-end mb-4 px-2">
                 <div>
-                    <h3 class="font-serif text-xl text-[var(--text-main)] mb-1">Session Log</h3>
+                    <h3 class="font-serif text-xl text-[var(--text-main)] mb-1 drop-shadow-md">Session Log</h3>
                     <p class="text-xs font-mono text-[var(--text-muted)]">Local terminal history</p>
                 </div>
                 <div class="flex gap-3">
@@ -341,15 +373,13 @@
                 </div>
             </div>
 
-            <!-- Search History -->
             <div class="relative mb-4">
                 <input type="text" id="history-search" placeholder="Search logs..." class="w-full glass-input rounded-lg px-10 py-2 text-sm font-mono focus:outline-none">
                 <svg class="w-4 h-4 absolute left-3 top-2.5 text-[var(--text-muted)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </div>
 
             <div id="history-container" class="flex flex-col gap-3">
-                <!-- History cards injected here -->
-                <div id="empty-history" class="glass-panel p-8 text-center text-[var(--text-muted)] border-dashed">
+                <div id="empty-history" class="glass-panel p-8 text-center text-[var(--text-muted)] border-dashed border-[var(--border-color)]">
                     <svg class="w-8 h-8 mx-auto mb-3 opacity-50" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
                     <p class="font-mono text-sm">No transmissions logged yet.</p>
                 </div>
@@ -357,17 +387,87 @@
         </section>
     </main>
 
-    <!-- UI Toast Notification Container -->
     <div id="toast" class="toast font-mono text-sm font-medium">Message</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // --- MATRIX RAIN ANIMATION (Ethereal & Side-focused) ---
+            const canvas = document.getElementById('matrix-rain');
+            const ctx = canvas.getContext('2d');
+            
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            
+            // Letters include numbers, symbols to fit the hacker vibe
+            const letters = '01ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$+-*/=%""\'#&_(),.;:?!\\|{}<>[]^~'.split('');
+            const fontSize = 14;
+            let columns = Math.floor(canvas.width / fontSize);
+            let drops = [];
+            
+            for (let x = 0; x < columns; x++) {
+                drops[x] = Math.random() * canvas.height;
+            }
+            
+            function drawMatrix() {
+                // Dimming the background creates the trail effect
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.font = fontSize + 'px JetBrains Mono';
+                
+                // Define the central protected area (where the panel is)
+                const centerX = canvas.width / 2;
+                const centerZoneWidth = 850; // slightly wider than max-w-3xl
+                const leftBound = centerX - (centerZoneWidth / 2);
+                const rightBound = centerX + (centerZoneWidth / 2);
+
+                for (let i = 0; i < drops.length; i++) {
+                    const xPos = i * fontSize;
+                    
+                    // Fade characters in the center so it stays heavily on the sides
+                    if (xPos > leftBound && xPos < rightBound) {
+                        ctx.fillStyle = `rgba(201, 150, 42, ${Math.random() * 0.02})`; // extremely faint
+                    } else {
+                        // Moody ethereal gold coloring on the sides
+                        const intensity = Math.random() * 0.4 + 0.1;
+                        ctx.fillStyle = `rgba(201, 150, 42, ${intensity})`;
+                    }
+                    
+                    const text = letters[Math.floor(Math.random() * letters.length)];
+                    ctx.fillText(text, xPos, drops[i] * fontSize);
+                    
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.98) {
+                        drops[i] = 0;
+                    }
+                    drops[i]++;
+                }
+                requestAnimationFrame(drawMatrix);
+            }
+            
+            // Re-initialize arrays if screen resizes significantly
+            window.addEventListener('resize', () => {
+                const newColumns = Math.floor(canvas.width / fontSize);
+                if(newColumns !== columns) {
+                    columns = newColumns;
+                    drops = [];
+                    for(let x = 0; x < columns; x++) {
+                        drops[x] = Math.random() * canvas.height;
+                    }
+                }
+            });
+
+            drawMatrix();
+
             // --- STATE MANAGEMENT ---
             const State = {
                 mode: 'decode', // 'decode' or 'encode'
                 cipher: 'caesar',
                 soundEnabled: true,
-                theme: 'dark',
+                theme: 'dark', // Keeping it defaulting to dark/hacker
                 history: JSON.parse(localStorage.getItem('cipher_history') || '[]')
             };
 
@@ -414,7 +514,8 @@
                 btnExportHistory: document.getElementById('btn-export-history'),
                 historySearch: document.getElementById('history-search'),
                 
-                toast: document.getElementById('toast')
+                toast: document.getElementById('toast'),
+                matrixRain: document.getElementById('matrix-rain')
             };
 
             // --- AUDIO ENGINE (Web Audio API) ---
@@ -437,8 +538,8 @@
                         osc.type = 'sine';
                         osc.frequency.setValueAtTime(800, now);
                         osc.frequency.exponentialRampToValueAtTime(400, now + 0.1);
-                        gain.gain.setValueAtTime(0.1, now);
-                        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                        gain.gain.setValueAtTime(0.05, now);
+                        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
                         osc.start(now);
                         osc.stop(now + 0.1);
                     } else if (type === 'success') {
@@ -446,7 +547,7 @@
                         osc.frequency.setValueAtTime(440, now);
                         osc.frequency.setValueAtTime(554, now + 0.1);
                         osc.frequency.setValueAtTime(659, now + 0.2);
-                        gain.gain.setValueAtTime(0.1, now);
+                        gain.gain.setValueAtTime(0.08, now);
                         gain.gain.linearRampToValueAtTime(0, now + 0.4);
                         osc.start(now);
                         osc.stop(now + 0.4);
@@ -454,7 +555,7 @@
                         osc.type = 'sawtooth';
                         osc.frequency.setValueAtTime(150, now);
                         osc.frequency.linearRampToValueAtTime(100, now + 0.2);
-                        gain.gain.setValueAtTime(0.2, now);
+                        gain.gain.setValueAtTime(0.1, now);
                         gain.gain.linearRampToValueAtTime(0, now + 0.2);
                         osc.start(now);
                         osc.stop(now + 0.2);
@@ -464,7 +565,6 @@
 
             // --- CRYPTOGRAPHY ENGINE ---
             const Crypto = {
-                // Gets shift strictly based on the FIRST word of the input string
                 getDynamicShift: (text) => {
                     if (!text || !text.trim()) return 0;
                     const firstWord = text.trim().split(/\s+/)[0];
@@ -472,11 +572,9 @@
                 },
                 
                 caesar: (text, encode) => {
-                    // Always calculate dynamic shift internally to enforce the rule
                     const shift = Crypto.getDynamicShift(text);
                     if (shift === 0) return text;
                     
-                    // If encoding, shift forward. If decoding, shift backward.
                     const s = encode ? shift : (26 - (shift % 26));
                     return text.replace(/[a-zA-Z]/g, (char) => {
                         const base = char <= 'Z' ? 65 : 97;
@@ -507,7 +605,7 @@
                     return result;
                 },
                 
-                rot13: (text) => Crypto.caesarWithExplicitShift(text, true, 13), // ROT13 is symmetrical
+                rot13: (text) => Crypto.caesarWithExplicitShift(text, true, 13), 
                 
                 atbash: (text) => {
                     return text.replace(/[a-zA-Z]/g, (char) => {
@@ -517,11 +615,8 @@
                 },
                 
                 base64: (text, encode) => {
-                    try {
-                        return encode ? btoa(text) : atob(text);
-                    } catch (e) {
-                        return "ERROR: Invalid Base64 string.";
-                    }
+                    try { return encode ? btoa(text) : atob(text); } 
+                    catch (e) { return "ERROR: Invalid Base64 string."; }
                 },
                 
                 binary: (text, encode) => {
@@ -536,7 +631,6 @@
                     }
                 },
 
-                // Helper for ROT13 and Brute Force
                 caesarWithExplicitShift: (text, encode, shift) => {
                     const s = encode ? shift : (26 - (shift % 26));
                     return text.replace(/[a-zA-Z]/g, (char) => {
@@ -556,18 +650,16 @@
             }
 
             function updateUIState() {
-                // Update Mode Buttons
                 if (State.mode === 'decode') {
-                    Elements.modeDecode.className = 'px-4 py-2 text-sm font-medium rounded-md bg-gold text-black transition-all shadow-[0_0_10px_rgba(201,150,42,0.4)]';
+                    Elements.modeDecode.className = 'px-4 py-2 text-sm font-medium rounded-md bg-gold text-black transition-all shadow-[0_0_15px_rgba(201,150,42,0.6)]';
                     Elements.modeEncode.className = 'px-4 py-2 text-sm font-medium rounded-md text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all';
                     Elements.btnProcessText.innerText = 'Decode Message';
                 } else {
-                    Elements.modeEncode.className = 'px-4 py-2 text-sm font-medium rounded-md bg-gold text-black transition-all shadow-[0_0_10px_rgba(201,150,42,0.4)]';
+                    Elements.modeEncode.className = 'px-4 py-2 text-sm font-medium rounded-md bg-gold text-black transition-all shadow-[0_0_15px_rgba(201,150,42,0.6)]';
                     Elements.modeDecode.className = 'px-4 py-2 text-sm font-medium rounded-md text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all';
                     Elements.btnProcessText.innerText = 'Encode Message';
                 }
 
-                // Update Cipher specific inputs
                 const c = State.cipher;
                 if (c === 'caesar') {
                     Elements.caesarSettings.classList.remove('hidden');
@@ -599,12 +691,11 @@
                 }
             }
 
-            // Matrix text scramble animation
+            // Matrix text scramble animation for decoding result
             async function scrambleTextElement(element, finalString, speed = 30) {
                 element.innerHTML = '';
                 const chars = '!@#$%^&*()_+-=[]{}|;:,.<>?/0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
                 
-                // Wrap each char in a span
                 const spans = finalString.split('').map(char => {
                     const span = document.createElement('span');
                     span.className = 'scramble-char';
@@ -615,19 +706,16 @@
 
                 playBeep('success');
 
-                // Resolve left to right
                 for (let i = 0; i < spans.length; i++) {
                     await new Promise(resolve => setTimeout(resolve, speed));
-                    // Scramble remaining
                     for (let j = i; j < spans.length; j++) {
                         if (spans[j].final.trim() !== '') {
                             spans[j].el.textContent = chars[Math.floor(Math.random() * chars.length)];
                         }
                     }
-                    // Lock in current
                     spans[i].el.textContent = spans[i].final;
-                    spans[i].el.style.color = '#C9962A'; // Gold flash
-                    setTimeout(() => spans[i].el.style.color = '', 300); // Revert to theme color
+                    spans[i].el.style.color = '#F5E100'; // Flash bright gold
+                    setTimeout(() => spans[i].el.style.color = '', 350); 
                 }
             }
 
@@ -639,20 +727,18 @@
                     return;
                 }
 
-                // UI Loading State
                 playBeep('click');
                 Elements.btnProcess.disabled = true;
                 Elements.iconUnlock.classList.add('hidden');
                 Elements.iconSpin.classList.remove('hidden');
                 Elements.btnProcess.classList.add('opacity-80', 'cursor-not-allowed');
 
-                // Simulate processing delay for effect
-                await new Promise(r => setTimeout(r, 600));
+                // Slightly longer simulated processing delay for dramatic ethereal effect
+                await new Promise(r => setTimeout(r, 800));
 
                 let result = '';
                 const isEncode = State.mode === 'encode';
                 
-                // Route to algorithm
                 switch(State.cipher) {
                     case 'caesar':
                         result = Crypto.caesar(input, isEncode);
@@ -667,10 +753,10 @@
                         result = Crypto.vigenere(input, isEncode, key);
                         break;
                     case 'rot13':
-                        result = Crypto.rot13(input); // rot13 is symmetric
+                        result = Crypto.rot13(input);
                         break;
                     case 'atbash':
-                        result = Crypto.atbash(input); // atbash is symmetric
+                        result = Crypto.atbash(input); 
                         break;
                     case 'base64':
                         result = Crypto.base64(input, isEncode);
@@ -687,16 +773,12 @@
                     return;
                 }
 
-                // Show Panel & Animate Text
                 Elements.brutePanel.classList.add('hidden');
                 Elements.outputPanel.classList.remove('hidden');
                 Elements.outputPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 
                 await scrambleTextElement(Elements.outputText, result, Math.max(10, 50 - result.length));
-
-                // Save to History
                 saveToHistory(input, result, State.cipher, State.mode);
-                
                 resetProcessBtn();
             }
 
@@ -716,7 +798,6 @@
                 Elements.brutePanel.classList.remove('hidden');
                 Elements.bruteList.innerHTML = '';
 
-                // Simple English heuristic: look for common small words
                 const commonWords = ['the', 'be', 'to', 'of', 'and', 'a', 'in', 'that', 'have', 'I', 'it', 'for', 'not', 'on', 'with', 'he', 'as', 'you', 'do', 'at', 'this', 'but', 'his', 'by', 'from'];
                 
                 let bestMatchIdx = 0;
@@ -741,13 +822,13 @@
                     const isBest = i === bestMatchIdx && maxScore > 0;
                     
                     const el = document.createElement('div');
-                    el.className = `p-3 rounded border font-mono text-sm ${isBest ? 'border-gold bg-[rgba(201,150,42,0.1)]' : 'border-[var(--border-color)] bg-[var(--surface-color)]'} flex justify-between gap-4`;
+                    el.className = `p-3 rounded border font-mono text-sm ${isBest ? 'border-gold bg-[rgba(201,150,42,0.15)] shadow-[0_0_10px_rgba(201,150,42,0.2)]' : 'border-[var(--border-color)] bg-[rgba(0,0,0,0.4)]'} flex justify-between gap-4 transition-all`;
                     
                     el.innerHTML = `
                         <div class="flex-1 break-all">${text.substring(0, 80)}${text.length > 80 ? '...' : ''}</div>
                         <div class="text-xs text-[var(--text-muted)] flex items-center gap-2 whitespace-nowrap">
                             SHIFT -${shiftVal}
-                            ${isBest ? '<span class="text-gold font-bold ml-2">★ LIKELY</span>' : ''}
+                            ${isBest ? '<span class="text-gold font-bold ml-2 animate-pulse">★ LIKELY</span>' : ''}
                         </div>
                     `;
                     Elements.bruteList.appendChild(el);
@@ -766,8 +847,7 @@
                 };
                 
                 State.history.unshift(entry);
-                if(State.history.length > 50) State.history.pop(); // limit size
-                
+                if(State.history.length > 50) State.history.pop();
                 localStorage.setItem('cipher_history', JSON.stringify(State.history));
                 renderHistory();
             }
@@ -791,14 +871,14 @@
 
                 filtered.forEach((item, index) => {
                     const card = document.createElement('div');
-                    card.className = `glass-panel p-4 animate-fade-in-up hover:border-gold transition-colors group`;
+                    card.className = `glass-panel p-4 hover:border-gold transition-colors group animate-fade-in-up`;
                     card.style.animationDelay = `${index * 50}ms`;
                     
                     card.innerHTML = `
                         <div class="flex justify-between items-start mb-2 border-b border-[var(--border-color)] pb-2">
                             <div class="flex gap-2 items-center">
-                                <span class="text-[10px] font-mono bg-[var(--bg-color)] px-2 py-1 rounded text-gold">${item.mode}</span>
-                                <span class="text-[10px] font-mono bg-[var(--bg-color)] px-2 py-1 rounded text-[var(--text-muted)]">${item.cipher}</span>
+                                <span class="text-[10px] font-mono bg-[rgba(0,0,0,0.5)] border border-[var(--border-color)] px-2 py-1 rounded text-gold">${item.mode}</span>
+                                <span class="text-[10px] font-mono bg-[rgba(0,0,0,0.5)] border border-[var(--border-color)] px-2 py-1 rounded text-[var(--text-muted)]">${item.cipher}</span>
                             </div>
                             <span class="text-[10px] text-[var(--text-muted)] font-mono">${item.date}</span>
                         </div>
@@ -813,7 +893,7 @@
                             </div>
                         </div>
                         <div class="mt-3 flex justify-end opacity-0 group-hover:opacity-100 transition-opacity">
-                             <button class="history-copy-btn flex items-center gap-1 text-[10px] font-mono bg-[var(--bg-color)] border border-[var(--border-color)] hover:border-gold px-2 py-1 rounded text-[var(--text-muted)] hover:text-gold transition-all" data-text="${item.fullResult.replace(/"/g, '&quot;')}">
+                             <button class="history-copy-btn flex items-center gap-1 text-[10px] font-mono bg-[rgba(0,0,0,0.5)] border border-[var(--border-color)] hover:border-gold px-2 py-1 rounded text-[var(--text-muted)] hover:text-gold transition-all" data-text="${item.fullResult.replace(/"/g, '&quot;')}">
                                 <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                                 COPY OUPUT
                             </button>
@@ -822,7 +902,6 @@
                     Elements.historyContainer.appendChild(card);
                 });
 
-                // Attach event listeners to new copy buttons
                 document.querySelectorAll('.history-copy-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const text = e.currentTarget.getAttribute('data-text');
@@ -831,27 +910,16 @@
                     });
                 });
             }
-
             
-            // Input Focus Effects
             Elements.mainInput.addEventListener('focus', () => Elements.inputWrapper.classList.add('focused'));
             Elements.mainInput.addEventListener('blur', () => Elements.inputWrapper.classList.remove('focused'));
-            
-            // Live Shift update
             Elements.mainInput.addEventListener('input', updateDynamicShiftDisplay);
 
-            // Mode Switching
             Elements.modeDecode.addEventListener('click', () => { State.mode = 'decode'; playBeep('click'); updateUIState(); });
             Elements.modeEncode.addEventListener('click', () => { State.mode = 'encode'; playBeep('click'); updateUIState(); });
             
-            // Cipher Type Switching
-            Elements.cipherType.addEventListener('change', (e) => {
-                State.cipher = e.target.value;
-                playBeep('click');
-                updateUIState();
-            });
+            Elements.cipherType.addEventListener('change', (e) => { State.cipher = e.target.value; playBeep('click'); updateUIState(); });
 
-            // Action Buttons
             Elements.btnProcess.addEventListener('click', processMessage);
             Elements.btnBrute.addEventListener('click', executeBruteForce);
             Elements.btnCloseBrute.addEventListener('click', () => Elements.brutePanel.classList.add('hidden'));
@@ -864,7 +932,6 @@
                 playBeep('click');
             });
 
-            // Copy & Share
             Elements.btnCopy.addEventListener('click', () => {
                 navigator.clipboard.writeText(Elements.outputText.innerText);
                 Elements.btnCopy.innerHTML = `<svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="#C9962A" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg> COPIED`;
@@ -885,7 +952,6 @@
                 showToast("Shareable link copied to clipboard!");
             });
 
-            // History Controls
             Elements.historySearch.addEventListener('input', (e) => renderHistory(e.target.value));
             
             Elements.btnClearHistory.addEventListener('click', () => {
@@ -905,15 +971,16 @@
                 showToast("History exported.");
             });
 
-            // Theme & Sound Toggles
             Elements.btnTheme.addEventListener('click', () => {
                 State.theme = State.theme === 'dark' ? 'light' : 'dark';
                 if(State.theme === 'light') {
                     Elements.body.classList.add('light-mode');
                     Elements.btnTheme.innerHTML = `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
+                    Elements.matrixRain.style.opacity = "0.15"; // Reduce matrix opacity in light mode
                 } else {
                     Elements.body.classList.remove('light-mode');
                     Elements.btnTheme.innerHTML = `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+                    Elements.matrixRain.style.opacity = "0.6";
                 }
                 playBeep('click');
             });
@@ -922,15 +989,14 @@
                 State.soundEnabled = !State.soundEnabled;
                 if(!State.soundEnabled) {
                     Elements.btnSound.innerHTML = `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>`;
-                    Elements.btnSound.classList.add('text-red-400');
+                    Elements.btnSound.classList.add('text-red-500');
                 } else {
                     Elements.btnSound.innerHTML = `<svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>`;
-                    Elements.btnSound.classList.remove('text-red-400');
-                    playBeep('click'); // Test sound
+                    Elements.btnSound.classList.remove('text-red-500');
+                    playBeep('click'); 
                 }
             });
 
-            // Keyboard Shortcuts
             document.addEventListener('keydown', (e) => {
                 if (e.ctrlKey && e.key === 'Enter') {
                     processMessage();
@@ -940,7 +1006,6 @@
             });
 
             function init() {
-                // Parse URL params for shared links
                 const urlParams = new URLSearchParams(window.location.search);
                 if (urlParams.has('text')) {
                     Elements.mainInput.value = decodeURIComponent(urlParams.get('text'));
@@ -949,15 +1014,12 @@
                     if (urlParams.has('key')) Elements.vigenereKey.value = urlParams.get('key');
                     
                     Elements.cipherType.value = State.cipher;
-                    
-                    // Clear URL without refreshing
                     window.history.replaceState({}, document.title, window.location.pathname);
                 }
 
                 updateUIState();
                 renderHistory();
                 
-                // Trigger initial typewriter effect on placeholder
                 const placeholderTxt = "Enter transmission to process... [Ctrl+Enter to Execute]";
                 Elements.mainInput.placeholder = "";
                 let i = 0;
@@ -968,7 +1030,6 @@
                 }, 30);
             }
 
-            // Start app
             init();
         });
     </script>
